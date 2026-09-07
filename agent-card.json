@@ -7,7 +7,7 @@
     "provider": {
       "organization": "Richard Hall"
     },
-    "iconUrl": "https://REPLACE-ME/icon.png"
+    "iconUrl": "https://raw.githubusercontent.com/rilhia/decodedly-blocks/main/icon.png"
   },
   "capabilities": {
     "taskKinds": ["request"]
