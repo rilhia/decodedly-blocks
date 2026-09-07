@@ -3,7 +3,7 @@
     "agentName": "decodedly",
     "displayName": "Decodedly",
     "description": "Hides a secret message inside ordinary-looking cover text using a reverse-engineered Vigenère key, and reveals it again.",
-    "version": "1.0.0",
+    "version": "1.0.3",
     "provider": {
       "organization": "Richard Hall"
     },
