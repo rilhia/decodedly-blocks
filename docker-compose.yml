@@ -1,0 +1,7 @@
+services:
+  decodedly:
+    build: .
+    container_name: decodedly
+    env_file:
+      - .env
+    restart: unless-stopped

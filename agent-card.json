@@ -1,0 +1,95 @@
+{
+  "identity": {
+    "agentName": "decodedly",
+    "displayName": "Decodedly",
+    "description": "Hides a secret message inside ordinary-looking cover text using a reverse-engineered Vigenère key, and reveals it again.",
+    "version": "1.0.0",
+    "provider": {
+      "organization": "Richard Hall"
+    },
+    "iconUrl": "https://REPLACE-ME/icon.png"
+  },
+  "capabilities": {
+    "taskKinds": ["request"]
+  },
+  "io": {
+    "inputs": [
+      {
+        "id": "hide",
+        "description": "Hide a secret message inside cover text. Derives a key such that coverText decodes to secretMessage when combined with that key.",
+        "contentType": "application/json",
+        "required": false,
+        "example": {
+          "secretMessage": "Meet me at the usual place, 9pm.",
+          "coverText": "Just a reminder that the quarterly report is due Friday, please send it over whenever you get a chance, thanks so much!"
+        },
+        "schema": {
+          "type": "object",
+          "required": ["secretMessage", "coverText"],
+          "properties": {
+            "secretMessage": {
+              "type": "string",
+              "description": "The message to hide."
+            },
+            "coverText": {
+              "type": "string",
+              "description": "The innocuous-looking cover text to hide it inside. Must be at least as long as secretMessage once non-printable characters are stripped."
+            }
+          }
+        }
+      },
+      {
+        "id": "reveal",
+        "description": "Reveal a secret message from cover text and a key produced by a previous \"hide\" call.",
+        "contentType": "application/json",
+        "required": false,
+        "example": {
+          "coverText": "Just a reminder that the quarterly report is due Friday, please send it over whenever you get a chance, thanks so much!",
+          "key": "|0.  s:r$xiy{ r*!r ( ${$<,iaY$wd"
+        },
+        "schema": {
+          "type": "object",
+          "required": ["coverText", "key"],
+          "properties": {
+            "coverText": {
+              "type": "string",
+              "description": "The cover text a key was derived from."
+            },
+            "key": {
+              "type": "string",
+              "description": "The key produced by a previous \"hide\" call."
+            }
+          }
+        }
+      }
+    ],
+    "outputs": [
+      {
+        "id": "key",
+        "description": "The derived key, produced when mode is \"hide\". Share this and the full coverText with your contact so they can reveal the secret.",
+        "contentType": "application/json",
+        "guaranteed": false
+      },
+      {
+        "id": "secretMessage",
+        "description": "The revealed secret message, produced when mode is \"reveal\".",
+        "contentType": "text/plain",
+        "guaranteed": false
+      }
+    ]
+  },
+  "tags": [
+    {
+      "id": "steganography",
+      "name": "Steganography",
+      "description": "Hides a message inside innocuous-looking text using a Vigenère-derived key rather than producing gibberish ciphertext.",
+      "examples": ["hide a secret message in text", "reveal a hidden message", "text steganography", "newspaper code"]
+    }
+  ],
+  "runtime": {
+    "handler": "./handler.ts",
+    "handlerExport": "default",
+    "concurrency": 1,
+    "expectedInstances": 1
+  }
+}

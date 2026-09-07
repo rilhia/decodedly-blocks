@@ -1,0 +1,19 @@
+{
+  "dependencies": {
+    "@blocks-network/sdk": "latest",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5",
+    "tsx": "^4.23.13"
+  },
+  "name": "decodedly",
+  "private": true,
+  "scripts": {
+    "check": "blocks check",
+    "start": "blocks run",
+    "trigger": "tsx trigger.ts"
+  },
+  "type": "module",
+  "version": "1.0.0"
+}
