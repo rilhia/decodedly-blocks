@@ -1,0 +1,7 @@
+.env
+pip.conf
+.npmrc
+node_modules
+npm-debug.log*
+*.tsbuildinfo
+.DS_Store
