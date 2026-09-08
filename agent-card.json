@@ -3,7 +3,7 @@
     "agentName": "decodedly",
     "displayName": "Decodedly",
     "description": "Hides a secret message inside ordinary-looking cover text using a reverse-engineered Vigenère key, and reveals it again.",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "provider": {
       "organization": "Richard Hall"
     },
@@ -15,49 +15,35 @@
   "io": {
     "inputs": [
       {
-        "id": "hide",
-        "description": "Hide a secret message inside cover text. Derives a key such that coverText decodes to secretMessage when combined with that key.",
+        "id": "request",
+        "description": "Hide a secret message inside cover text (mode: \"hide\") or reveal a secret from cover text + key (mode: \"reveal\"). The pre-filled example above is for \"hide\" — for \"reveal\", try: {\"mode\": \"reveal\", \"coverText\": \"Just a reminder that the quarterly report is due Friday, please send it over whenever you get a chance, thanks so much!\", \"key\": \"|0.  s:r$xiy{ r*!r ( ${$<,iaY$wd\"}. That key is the real one this agent's own \"hide\" example above produces, so it decodes back to \"Meet me at the usual place, 9pm.\"",
         "contentType": "application/json",
-        "required": false,
+        "required": true,
         "example": {
+          "mode": "hide",
           "secretMessage": "Meet me at the usual place, 9pm.",
           "coverText": "Just a reminder that the quarterly report is due Friday, please send it over whenever you get a chance, thanks so much!"
         },
         "schema": {
           "type": "object",
-          "required": ["secretMessage", "coverText"],
+          "required": ["mode"],
           "properties": {
+            "mode": {
+              "type": "string",
+              "enum": ["hide", "reveal"],
+              "description": "\"hide\" derives a key from secretMessage + coverText. \"reveal\" decodes coverText + key back into the secret."
+            },
             "secretMessage": {
               "type": "string",
-              "description": "The message to hide."
+              "description": "The message to hide. Required for mode \"hide\"."
             },
             "coverText": {
               "type": "string",
-              "description": "The innocuous-looking cover text to hide it inside. Must be at least as long as secretMessage once non-printable characters are stripped."
-            }
-          }
-        }
-      },
-      {
-        "id": "reveal",
-        "description": "Reveal a secret message from cover text and a key produced by a previous \"hide\" call.",
-        "contentType": "application/json",
-        "required": false,
-        "example": {
-          "coverText": "Just a reminder that the quarterly report is due Friday, please send it over whenever you get a chance, thanks so much!",
-          "key": "|0.  s:r$xiy{ r*!r ( ${$<,iaY$wd"
-        },
-        "schema": {
-          "type": "object",
-          "required": ["coverText", "key"],
-          "properties": {
-            "coverText": {
-              "type": "string",
-              "description": "The cover text a key was derived from."
+              "description": "The innocuous-looking text to hide the message inside (mode \"hide\"), or the text the key was derived from (mode \"reveal\"). Must be at least as long as secretMessage once non-printable characters are stripped."
             },
             "key": {
               "type": "string",
-              "description": "The key produced by a previous \"hide\" call."
+              "description": "The key produced by a previous \"hide\" call. Required for mode \"reveal\"."
             }
           }
         }

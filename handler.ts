@@ -37,31 +37,36 @@ function sanitize(str: string): string {
     .join('');
 }
 
-type HidePayload = { secretMessage?: string; coverText?: string };
-type RevealPayload = { coverText?: string; key?: string };
+type Payload = {
+  mode?: string;
+  secretMessage?: string;
+  coverText?: string;
+  key?: string;
+};
 
 export default async function handler(
   task: StartTaskMessage,
   ctx?: TaskContext,
 ): Promise<HandlerResult> {
-  const hidePart = task.requestParts?.find((p) => p.partId === 'hide');
-  const revealPart = task.requestParts?.find((p) => p.partId === 'reveal');
+  const raw = task.requestParts?.[0]?.text ?? '{}';
 
-  if (hidePart) {
+  let payload: Payload;
+  try {
+    payload = JSON.parse(raw);
+  } catch {
+    throw new Error('Input must be valid JSON with a "mode" field ("hide" or "reveal").');
+  }
+
+  const { mode } = payload;
+
+  if (mode === 'hide') {
     ctx?.reportStatus('Deriving key from cover text...');
-
-    let payload: HidePayload;
-    try {
-      payload = JSON.parse(hidePart.text ?? '{}');
-    } catch {
-      throw new Error('The "hide" input must be valid JSON with secretMessage and coverText.');
-    }
 
     const secret = sanitize(payload.secretMessage ?? '');
     const cover = sanitize(payload.coverText ?? '');
 
-    if (!secret) throw new Error('secretMessage is required.');
-    if (!cover) throw new Error('coverText is required.');
+    if (!secret) throw new Error('secretMessage is required for mode "hide".');
+    if (!cover) throw new Error('coverText is required for mode "hide".');
     if (secret.length > cover.length) {
       throw new Error(
         `coverText must be at least as long as secretMessage once non-printable characters are removed ` +
@@ -90,21 +95,14 @@ export default async function handler(
     };
   }
 
-  if (revealPart) {
+  if (mode === 'reveal') {
     ctx?.reportStatus('Decoding cover text with key...');
-
-    let payload: RevealPayload;
-    try {
-      payload = JSON.parse(revealPart.text ?? '{}');
-    } catch {
-      throw new Error('The "reveal" input must be valid JSON with coverText and key.');
-    }
 
     const cover = sanitize(payload.coverText ?? '');
     const key = sanitize(payload.key ?? '');
 
-    if (!cover) throw new Error('coverText is required.');
-    if (!key) throw new Error('key is required.');
+    if (!cover) throw new Error('coverText is required for mode "reveal".');
+    if (!key) throw new Error('key is required for mode "reveal".');
     if (key.length > cover.length) {
       throw new Error('key is longer than coverText — check you have the matching cover text.');
     }
@@ -121,5 +119,5 @@ export default async function handler(
     };
   }
 
-  throw new Error('Send a "hide" or "reveal" input part.');
+  throw new Error(`Unknown mode "${String(mode)}". Use "hide" or "reveal".`);
 }

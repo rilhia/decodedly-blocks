@@ -11,13 +11,13 @@ import type { ArtifactEvent, ProgressEvent } from '@blocks-network/sdk';
 const SECRET = "Hi, I think you're a bit of a twat! Go away!";
 const COVER = 'Hi, how are you today? I think that this is great!';
 
-async function sendTask(client: TaskClient, partId: 'hide' | 'reveal', payload: Record<string, unknown>): Promise<string> {
+async function sendTask(client: TaskClient, mode: string, payload: Record<string, unknown>): Promise<string> {
   const session = await client.sendMessage({
     agentName: 'decodedly',
-    requestParts: [textPart(JSON.stringify(payload), partId)],
+    requestParts: [textPart(JSON.stringify({ mode, ...payload }), 'request')],
   });
 
-  console.log(`\nTask created [${partId}]:`, session.taskId);
+  console.log(`\nTask created [${mode}]:`, session.taskId);
 
   let result = '';
   session.onProgress((event: ProgressEvent) => {
