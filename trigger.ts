@@ -8,7 +8,7 @@ import type { ArtifactEvent, ProgressEvent } from '@blocks-network/sdk';
  * Usage: npx tsx trigger.ts   (or: docker compose exec decodedly npx tsx trigger.ts)
  */
 
-const SECRET = "Hi, I think you're a bit of a twat! Go away!";
+const SECRET = "Hi...now go away! Thanks";
 const COVER = 'Hi, how are you today? I think that this is great!';
 
 async function sendTask(client: TaskClient, mode: string, payload: Record<string, unknown>): Promise<string> {
